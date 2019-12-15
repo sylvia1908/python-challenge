@@ -1,0 +1,154 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import os\n",
+    "import csv"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "csvpath = os.path.join('Resources','election_data.csv')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 117,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "with open(csvpath, newline='') as csvfile:\n",
+    "    \n",
+    "    csvreader = csv.reader(csvfile, delimiter=',')\n",
+    "    csvheader = next(csvfile)\n",
+    "    csvdata = list(csvreader)\n",
+    "    \n",
+    "#     unique candidates list\n",
+    "candidates = []\n",
+    "    \n",
+    "#     votes # for each candidates\n",
+    "votes = []\n",
+    "    \n",
+    "#     loop through all votes\n",
+    "for row in csvdata:\n",
+    "        \n",
+    "#         if candidate is already in candidates list find position and add 1\n",
+    "    if len([ candidate for candidate in candidates if row[2] in candidate] )>0:\n",
+    "            index = candidates.index(row[2])\n",
+    "            votes[index] +=1\n",
+    "                \n",
+    "#       if candidate is NOT in candidates list add to candidates list and votes\n",
+    "    else:\n",
+    "        candidates.extend([row[2]])\n",
+    "        votes.extend([0])\n",
+    "        index = candidates.index(row[2])\n",
+    "        votes[index] +=1\n",
+    "#     sum total and calculate rate\n",
+    "total= sum(votes)\n",
+    "rates = [votes[x]/total for x in range(len(candidates))]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#         zip result together\n",
+    "result = list(zip(candidates,rates ,votes))\n",
+    "Rbody=''\n",
+    "nextline ='\\n'\n",
+    "for r in range(len(result)):\n",
+    "    Rbody = Rbody+str(result[r][0])+'\\t'+\"{:.02%}\".format(result[r][1])+'\\t' + str(result[r][2])+nextline"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 131,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "winner = next(iter([row[0] for row in result if row[2]== max(votes)]))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 140,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "Rheader = 'Election Results'\n",
+    "Rbreaker ='-------------------------'\n",
+    "Rtotal = f'Total Votes: {str(total)}'\n",
+    "Rwinner = f'Winner: {winner}'\n",
+    "\n",
+    "Report = Rheader + nextline + Rbreaker + nextline + Rtotal + nextline + Rbody + nextline+ Rbreaker +nextline+ Rwinner"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 141,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Election Results\n",
+      "-------------------------\n",
+      "Total Votes: 3521001\n",
+      "Khan\t63.00%\t2218231\n",
+      "Correy\t20.00%\t704200\n",
+      "Li\t14.00%\t492940\n",
+      "O'Tooley\t3.00%\t105630\n",
+      "\n",
+      "-------------------------\n",
+      "Winner: Khan\n"
+     ]
+    }
+   ],
+   "source": [
+    "with open('ElectionResults.txt','w') as Result:\n",
+    "    Result.write(Report)\n",
+    "\n",
+    "print(Report)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.7.4"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2
+}
